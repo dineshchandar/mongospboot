@@ -17,18 +17,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 import static com.mongodb.client.model.Filters.eq;
 
 @RestController
 @RequestMapping("v1/person")
 public class PersonController {
 
-//    @Autowired
-//    PaintRepo paintRepo;
+    @Autowired
+    PaintRepo paintRepo;
 
     @GetMapping("/all")
-    ResponseEntity<?> getAll(){
-
+    ResponseEntity<?> connectionString(){
 
         ConnectionString connectionString = new ConnectionString("mongodb+srv://root:root@cluster0.oesnvye.mongodb.net/?retryWrites=true&w=majority");
         MongoClientSettings settings = MongoClientSettings.builder()
@@ -49,11 +50,19 @@ public class PersonController {
         Document doc = coll2.find().first();
         System.out.println(doc.toJson());
 
-//        System.out.println(paintRepo.findAll());
-
-
         return new ResponseEntity("ok",HttpStatus.OK);
     }
+
+
+    @GetMapping("/all2")
+    ResponseEntity<?> withoutConnectionString() {
+        
+        List<PaintPurchase> documentList = paintRepo.findAll();
+        documentList.stream().forEach(paintPurchase -> System.out.println(paintPurchase.getColor()));
+
+        return new ResponseEntity(documentList,HttpStatus.OK);
+    }
+    
 
 
 }
